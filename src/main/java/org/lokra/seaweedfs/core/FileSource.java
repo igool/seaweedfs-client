@@ -44,7 +44,7 @@ public class FileSource implements InitializingBean, DisposableBean {
 
     private static final Log log = LogFactory.getLog(FileSource.class);
 
-    private String host = "139.224.42.154";
+    private String host = "localhost";
     private int port = 9333;
     private int connectionTimeout = 60;
     private int statusExpiry = 30;
