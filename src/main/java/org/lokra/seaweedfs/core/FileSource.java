@@ -47,9 +47,9 @@ public class FileSource implements InitializingBean, DisposableBean {
     private String host = "localhost";
     private int port = 9333;
     private int connectionTimeout = 60;
-    private int statusExpiry = 30;
+    private int statusExpiry = 60;
     private int maxConnection = 100;
-    private int idleConnectionExpiry = 30;
+    private int idleConnectionExpiry = 60;
     private int maxConnectionsPreRoute = 1000;
     private boolean enableLookupVolumeCache = true;
     private int lookupVolumeCacheExpiry = 120;

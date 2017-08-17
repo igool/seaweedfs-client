@@ -287,7 +287,7 @@ class Connection {
             request.releaseConnection();
         }
 
-        if (jsonResponse.json.contains("\"error\":\"")) {
+        if (jsonResponse != null && jsonResponse.json.contains("\"error\":\"")) {
             Map map = objectMapper.readValue(jsonResponse.json, Map.class);
             final String errorMsg = (String) map.get("error");
             if (errorMsg != null)

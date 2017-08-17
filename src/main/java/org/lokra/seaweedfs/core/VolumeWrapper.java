@@ -24,6 +24,8 @@ package org.lokra.seaweedfs.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
@@ -37,6 +39,7 @@ import org.lokra.seaweedfs.core.http.JsonResponse;
 import org.lokra.seaweedfs.core.http.StreamResponse;
 import org.lokra.seaweedfs.exception.SeaweedfsException;
 import org.lokra.seaweedfs.exception.SeaweedfsFileNotFoundException;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,6 +91,10 @@ class VolumeWrapper {
         HttpEntity entity = builder.build();
         request.setEntity(entity);
         JsonResponse jsonResponse = connection.fetchJsonResultByRequest(request);
+        //如果jsonResponse为空,只有可能这个文件比较大
+        if ( jsonResponse == null ){
+            jsonResponse = new  JsonResponse("{\"name\":\""+fileName+"\",\"size\":0}", HttpStatus.SC_OK);
+        }
         convertResponseStatusToException(jsonResponse.statusCode, url, fid, false, false, false, false);
         return (Integer) objectMapper.readValue(jsonResponse.json, Map.class).get("size");
     }
