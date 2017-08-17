@@ -8,7 +8,7 @@
 [![MIT license](http://img.shields.io/badge/license-MIT-blue.svg)](http://opensource.org/licenses/MIT)
 
 # Features
-[SeaweedFS](https://github.com/chrislusf/seaweedfs) is a simple and highly scalable distributed file system and started by implementing [Facebook's Haystack design paper](http://www.usenix.org/event/osdi10/tech/full_papers/Beaver.pdf). SeaweedFS is currently growing, with more features on the way.
+[SeaweedFS](https://github.com/igool/seaweedfs-client) is a simple and highly scalable distributed file system and started by implementing [Facebook's Haystack design paper](http://www.usenix.org/event/osdi10/tech/full_papers/Beaver.pdf). SeaweedFS is currently growing, with more features on the way.
 
 This Java client is encapsulates the functionality full of the SeaweedFS API and provides a simple interface.
 
