@@ -72,7 +72,8 @@ public class ConnectionUtil {
      * @return result
      */
     public static String convertUrlWithScheme(String serverUrl) {
-        return "http://" + serverUrl;
+        boolean startHttp = serverUrl.startsWith("http");
+        return startHttp ? serverUrl : "http://" + serverUrl;
     }
 
 }

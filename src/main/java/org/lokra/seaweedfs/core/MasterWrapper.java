@@ -68,7 +68,7 @@ class MasterWrapper {
      */
     AssignFileKeyResult assignFileKey(AssignFileKeyParams params) throws IOException {
         checkConnection();
-        final String url = connection.getLeaderUrl() + RequestPathStrategy.assignFileKey + params.toUrlParams();
+        final String url = connection.getLeaderUrl()+ RequestPathStrategy.assignFileKey + params.toUrlParams();
         HttpGet request = new HttpGet(url);
         JsonResponse jsonResponse = connection.fetchJsonResultByRequest(request);
         return objectMapper.readValue(jsonResponse.json, AssignFileKeyResult.class);
