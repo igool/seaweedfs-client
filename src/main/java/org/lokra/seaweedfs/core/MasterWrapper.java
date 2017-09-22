@@ -23,15 +23,20 @@
 package org.lokra.seaweedfs.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpGet;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.lokra.seaweedfs.core.contect.*;
 import org.lokra.seaweedfs.core.http.JsonResponse;
+import org.lokra.seaweedfs.core.topology.DataCenter;
+import org.lokra.seaweedfs.core.topology.SystemTopologyStatus;
 import org.lokra.seaweedfs.exception.SeaweedfsException;
 import org.lokra.seaweedfs.util.RequestPathStrategy;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.lokra.seaweedfs.core.Connection.LOOKUP_VOLUME_CACHE_ALIAS;
 
@@ -41,7 +46,7 @@ import static org.lokra.seaweedfs.core.Connection.LOOKUP_VOLUME_CACHE_ALIAS;
  * @author Chiho Sin
  */
 class MasterWrapper {
-
+    private static final Log log = LogFactory.getLog(MasterWrapper.class);
     private Connection connection;
     private Cache<Long, LookupVolumeResult> lookupVolumeCache;
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -68,10 +73,30 @@ class MasterWrapper {
      */
     AssignFileKeyResult assignFileKey(AssignFileKeyParams params) throws IOException {
         checkConnection();
+        //增加可用volume的判断
+        SystemTopologyStatus systemTopologyStatus = connection.getSystemTopologyStatus();
+        List<DataCenter> dataCenterList = systemTopologyStatus.getDataCenters();
+        params.setDataCenter(getOneAvailableDataCenter(dataCenterList).getId());
+        log.info(" datacenter "+getOneAvailableDataCenter(dataCenterList) +" url "+params.toUrlParams());
         final String url = connection.getLeaderUrl()+ RequestPathStrategy.assignFileKey + params.toUrlParams();
         HttpGet request = new HttpGet(url);
         JsonResponse jsonResponse = connection.fetchJsonResultByRequest(request);
         return objectMapper.readValue(jsonResponse.json, AssignFileKeyResult.class);
+    }
+
+    /***
+     * 得到可用的datacenter
+     * @param List<DataCenter> dataCenterList 当前的数据volume集合
+     * @return DataCenter 得到一个可用的集合
+     * **/
+    private DataCenter getOneAvailableDataCenter(List<DataCenter> dataCenterList){
+        for(DataCenter dataCenter : dataCenterList ){
+            if ( dataCenter.getFree() != 0 ){
+                return dataCenter;
+            }
+        }
+        //如果走到这里，说明也没有可用的空间，直接返回第一个存储volume
+        return dataCenterList.get(0);
     }
 
     /**
