@@ -275,13 +275,14 @@ class Connection {
             jsonResponse = new JsonResponse(EntityUtils.toString(entity), response.getStatusLine().getStatusCode());
             EntityUtils.consume(entity);
         }catch(Exception e){
-            log.error(e);
+            log.error("request url "+request.getURI(),e);
         }
         finally {
             if (response != null) {
                 try {
                     response.close();
                 } catch (IOException ignored) {
+                    log.error("close request url "+request.getURI(), ignored);
                 }
             }
             request.releaseConnection();
